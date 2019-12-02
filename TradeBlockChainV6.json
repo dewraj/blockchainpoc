@@ -1,0 +1,324 @@
+{
+
+  "ApplicationName": "TradeBlockChainV6",
+  "DisplayName": "Mcriosoft Trade BlockChain",
+  "Description": "Allows transfer of assets between a buyer and a seller, with appraisal/inspection functionality",
+
+  "ApplicationRoles": [
+    {
+      "Name": "ECC",
+      "Description": "Mcirosoft Partners - request the transaction"
+    },
+    {
+      "Name": "GTS",
+      "Description": "GTS Application - verify and update transaction"
+    },
+    {
+      "Name": "Broker",
+      "Description": "FedEx - verify and update transaction"
+    },
+    {
+      "Name": "Custom",
+      "Description": "Custom Officer - verify and update transaction"
+    }
+  ],
+
+  "Workflows": [
+    {
+      "Name": "TradeBlockChainV6",
+      "DisplayName": "Mcriosoft Trade BlockChain",
+      "Description": "Handles the business logic for the asset transfer scenario",
+      "Initiators": [ "ECC" ],
+      "StartState":  "Active",
+      "Properties": [
+        {
+          "Name": "State",
+          "DisplayName": "State",
+          "Description": "Holds the state of the contract",
+          "Type": {
+            "Name": "state"
+          }
+        },
+        {
+          "Name": "TotalValue",
+          "DisplayName": "Total Value",
+          "Description": "Describes the assets TotalValue",
+          "Type": {
+            "Name": "money"
+          }
+        },
+        {
+          "Name": "CountryOfOrigin",
+          "DisplayName": "CountryOfOrigin",
+          "Description": "Country Of Origin of the asset",
+          "Type": {
+            "Name": "string"
+          }
+        },
+        {
+          "Name": "Tax",
+          "DisplayName": "Tax",
+          "Description": "The Tax being paid for the asset",
+          "Type": {
+            "Name": "money"
+          }
+        },
+        {
+          "Name": "CustomDuty",
+          "DisplayName": "Custom Duty",
+          "Description": "The custom duty paid for the asset",
+          "Type": {
+            "Name": "money"
+          }
+        },
+        {
+          "Name": "OrderQuanity",
+          "Description": "The quantity of this asset",
+          "DisplayName": "Quantity",
+          "Type": {
+            "Name": "int"
+          }
+        },
+        {
+          "Name": "ProductCode",
+          "DisplayName": "ProductCode",
+          "Description": "The ProductCode of this asset",
+          "Type": {
+            "Name": "string"
+          }
+        },
+        {
+          "Name": "InstanceOwner",
+          "DisplayName": "InstanceOwner",
+          "Description": "The InstanceOwner of this asset",
+          "Type": {
+            "Name": "ECC"
+          }
+        },
+        {
+          "Name": "GTS",
+          "DisplayName": "GTS",
+          "Description": "The GTS of this asset",
+          "Type": {
+            "Name": "GTS"
+          }
+        },
+        {
+          "Name": "Broker",
+          "DisplayName": "Broker",
+          "Description": "The Broker of this asset",
+          "Type": {
+            "Name": "Broker"
+          }
+        }
+      ],
+
+      "Constructor": {
+        "Parameters": [
+          {
+
+            "Name": "productcode",
+            "Description": "Product Code",
+            "DisplayName": "ProductCode",
+            "Type": {
+              "Name": "string"
+            }
+
+          },
+          {
+            "Name": "quantity",
+            "Description": "Order Quanity",
+            "DisplayName": "OrderQuanity",
+            "Type": {
+              "Name": "int"
+            }
+          }
+        ]
+      },
+
+      "Functions": [
+        {
+          "Name": "Active",
+          "DisplayName": "Active",
+          "Description": "Used to Activate this particular instance of asset transfer",
+          "Parameters": []
+        },
+        {
+          "Name": "Modify",
+          "DisplayName": "Modify",
+          "Description": "Modify the description/price attributes of this asset transfer instance",
+          "Parameters": [
+            {
+              "Name": "quantity",
+              "Description": "The new description of the asset",
+              "DisplayName": "OrderQuanity",
+              "Type": {
+                "Name": "int"
+              }
+            },
+            {
+              "Name": "totalvalue",
+              "Description": "The new total value of the asset",
+              "DisplayName": "TotalValue",
+              "Type": {
+                "Name": "money"
+              }
+            },
+            {
+              "Name": "tax",
+              "Description": "The new Tax of the asset",
+              "DisplayName": "Tax",
+              "Type": {
+                "Name": "money"
+              }
+            }
+          ]
+        },
+        {
+          "Name": "PendingCustomReview",
+          "DisplayName": "PendingCustomReview",
+          "Description": "Pending Custom Review",
+          "Parameters": []
+        },
+        {
+          "Name": "Terminate",
+          "DisplayName": "Terminate",
+          "Description": "Used to cancel this particular instance of asset transfer",
+          "Parameters": []
+        },
+        {
+          "Name": "UpdateTax",
+          "DisplayName": "UpdateTax",
+          "Description": "Used to Update Tax by Custom Officer",
+          "Parameters": [
+            {
+              "Name": "tax",
+              "Description": "The new Tax of the asset",
+              "DisplayName": "Tax",
+              "Type": {
+                "Name": "money"
+              }
+            }
+          ]
+        }
+      ],
+
+      "States": [
+        {
+          "Name": "Active",
+          "DisplayName": "Active",
+          "Description": "The initial state of the asset transfer workflow",
+          "PercentComplete": 20,
+          "Style": "Success",
+          "Transitions": [
+            {
+              "AllowedRoles": [],
+              "AllowedInstanceRoles": [ "InstanceOwner" ],
+              "Description": "Cancels this instance of asset transfer",
+              "Function": "Terminate",
+              "NextStates": [ "Terminated" ],
+              "DisplayName": "Terminate Order"
+            },
+           {
+              "AllowedRoles": ["GTS"],
+              "AllowedInstanceRoles": [],
+              "Description": "Modify attributes of this asset transfer instance",
+              "PercentComplete": 30,
+              "Function": "Modify",
+              "NextStates": [ "Modify" ],
+              "DisplayName": "Modify"
+            },
+            {
+              "AllowedRoles": ["GTS"],
+              "AllowedInstanceRoles": [],
+              "Description": "Cancels this instance of asset transfer",
+              "PercentComplete": 100,
+              "Function": "Terminate",
+              "NextStates": [ "Terminated" ],
+              "DisplayName": "Terminate Offer"
+            }
+          ]
+        },        
+        {
+          "Name": "Modify",
+          "DisplayName": "Modify",
+          "Description": "Asset transfer has been Modify",
+          "PercentComplete": 50,
+          "Style": "Modify",
+          "Transitions": [
+            {
+              "AllowedRoles": ["Broker"],
+              "AllowedInstanceRoles": [],
+              "Description": "Modify attributes of this asset transfer instance",
+              "PercentComplete": 50,
+              "Function": "Modify",
+              "NextStates": ["Modify" ],
+              "DisplayName": "Modify"
+            },
+            {
+              "AllowedRoles": ["Broker"],
+              "AllowedInstanceRoles": [],
+              "Description": "Cancels this instance of asset transfer",
+              "PercentComplete": 100,
+              "Function": "Terminate",
+              "NextStates": [ "Terminated" ],
+              "DisplayName": "Terminate Offer"
+            },
+            {
+              "AllowedRoles": ["Broker"],
+              "AllowedInstanceRoles": [],
+              "Description": "Send to Custom for review",
+              "PercentComplete": 60,
+              "Function": "PendingCustomReview",
+              "NextStates": ["PendingCustomReview"],
+              "DisplayName": "PendingCustomReview"
+            }
+          ]
+        },
+        {
+          "Name": "PendingCustomReview",
+          "DisplayName": "PendingCustomReview",
+          "Description": "Pending Custom Review",
+          "PercentComplete": 90,
+          "Style": "Modify",
+          "Transitions": [
+            {
+              "AllowedRoles": ["Custom"],
+              "AllowedInstanceRoles": [],
+              "Description": "Cancels this instance of asset transfer",
+              "PercentComplete": 100,
+              "Function": "Terminate",
+              "NextStates": [ "Terminated" ],
+              "DisplayName": "Terminate Offer"
+            },
+            {
+              "AllowedRoles": ["Custom"],
+              "AllowedInstanceRoles": [],
+              "Description": "Updated by Custom Officer",
+              "PercentComplete": 90,
+              "Function": "UpdateTax",
+              "NextStates": ["Completed"],
+              "DisplayName": "Complete Contract"
+            }
+          ]
+        },
+        {
+          "Name": "Terminated",
+          "DisplayName": "Terminated",
+          "Description": "Asset transfer has been cancelled",
+          "PercentComplete": 100,
+          "Style": "Failure",
+          "Transitions": []
+        },
+        {
+          "Name": "Completed",
+          "DisplayName": "Completed",
+          "Description": "Asset transfer has been Completed",
+          "PercentComplete": 100,
+          "Style": "Success",
+          "Transitions": []
+        }
+      ]
+    }
+  ]
+}
