@@ -1,4 +1,4 @@
 # blockchainpoc
-Trade BlockChain POC
+Trade BlockChain POC Project
 
-Using this repository for DevOPS Assignment
+Using this repository for DevOPS Assignment1 
